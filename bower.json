@@ -1,0 +1,17 @@
+{
+  "name": "post-eso",
+  "description": "a customizable post-it-like element",
+  "main": "post-eso.html",
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.4.0",
+    "interact": "^1.2.6",
+    "iron-input": "PolymerElements/iron-input#^1.0.10",
+    "iron-autogrow-textarea": "PolymerElements/iron-autogrow-textarea#^1.0.14"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.0.0",
+    "web-component-tester": "^4.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"
+  }
+}

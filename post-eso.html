@@ -1,0 +1,244 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="/interact-wrapper.html">
+<link rel="import" href="../iron-input/iron-input.html">
+<link rel="import" href="../iron-autogrow-textarea/iron-autogrow-textarea.html">
+
+
+<!--
+`<post-eso>` es un elemento personsonalizable inspirado en post-its para anotar recordatorios o información importante.
+
+Uso:
+
+    <body>
+      <post-eso placeholder="Escribe aquí.." name="mi-nota"></post-eso>
+
+
+### Styling
+
+`<post-eso>` provee las siguientes custom properties para estilizar:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--post-eso-width` | Ancho del cuadro | 150px
+`--post-eso-height` | Alto del cuadro | 150px
+`--post-eso-color` | Color del cuadro | yellow
+`--post-eso-font-color` | Color de la fuente | blue
+`--post-eso-font-family` | Tipo de fuente | inherit
+
+@demo demo/post-eso-index.html 
+-->
+
+<dom-module id="post-eso">
+  <template>
+    <style>
+      :host {
+        display: inline-block;
+        position: relative; /*absolute: no utiliza espacio. relative: utiliza espacio*/
+        width: var(--post-eso-width, 180px);
+        height: var(--post-eso-height, 180px);
+        overflow: hidden;
+        background: var(--post-eso-color, yellow);
+        border: 1px solid black;
+        box-sizing: border-box;
+      }
+
+      :host:before {
+        content: "";
+        display: block;
+        padding-top: 100%;
+      }
+      .square-content {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        color: blue;
+      }
+      .square-content div {
+        display: table;
+        width: 100%;
+        height: 100%;
+        -webkit-transform: translate(0px, 0px);
+        transform: translate(0px, 0px);
+        /*cursor: move;*/
+      }
+      .square-content span {
+        display: table-cell;
+        vertical-align: middle;
+        color: var(--post-eso-font-color, blue);
+        font-family: var(--post-eso-font-family, inherit);
+      }
+
+      textarea, iron-autogrow-textarea {
+        font: inherit;
+        text-align: center;
+        border: none;
+        resize: none;
+        width: 90%;
+        height: 80%;
+        background-color: inherit;
+        font-family: inherit;
+        color: inherit;
+      }
+    </style>
+
+
+
+    <div class='square-content' on-mousedown="_flagDownChange" on-mousemove="_flagMoveChange" on-mouseup="_flagUpChange">
+
+      <div>
+        <span>
+          <iron-autogrow-textarea id="ta" placeholder="[[placeholder]]" value="{{text}}" name="{{name}}">{{value}}</iron-autogrow-textarea>
+        </span>
+      </div>
+    
+    </div>
+
+
+  </template>
+
+
+
+
+  <script>
+    Polymer({
+
+      is: 'post-eso',
+
+      properties: {
+        /**
+        * Placeholder
+        */
+        placeholder: {
+          type: String,
+          value: 'Escribe tu recordatorio..',
+        },
+
+        /** 
+        * El texto ingresado en el Post-Eso
+        */
+        text: {
+          type: String,
+          value: '',
+          observer: '_textChanged',
+        },
+
+        /**
+        * Nombre del texto
+        */
+        name: {
+          type: String,
+          value: '',
+        },
+
+        /**
+        * Largo mínimo de texto para cambiar a estado de alerta en Post-Eso
+        */
+        alertThreshold: {
+          type: Number,
+          value: '',
+        },
+
+        flagUpDown: false, //Up: false, Down: true
+        flagMove: false, //moving: true, not moving: false
+      },
+
+      _flagDownChange: function() {
+        this.flagUpDown = true; 
+      },
+      _flagUpChange: function() {
+        this.flagUpDown = false;
+      },
+      _flagMoveChange: function() {
+        this.flagMove = true;
+
+        this.changePosition();
+      },
+
+      // post-eso se libera y no utiliza espacio cuando lo sacamos de su posición de inición mediante dragging
+      changePosition: function() {
+        if(this.flagUpDown && this.flagMove) {
+          this.style.position = 'absolute';
+        }
+      },
+
+      _textChanged: function() {
+        if ( this.text.length > parseInt(this.alertThreshold) ) {
+          this.style.backgroundColor = 'red';
+          this.$.ta.style.color = 'white';
+        } else {
+          this.style.backgroundColor = 'yellow';
+          this.$.ta.style.color = 'blue';
+        }
+      },
+
+      ready: function() {
+
+        interact(this)
+          .draggable({
+            onmove: dragMoveListener,
+          })
+          .resizable({
+            edges: { left: true, right: true, bottom: true, top: true }
+          })
+          .on('resizemove', function (event) {
+            var target = event.target;
+                x = (parseFloat(target.getAttribute('data-x')) || 0),
+                y = (parseFloat(target.getAttribute('data-y')) || 0);
+
+            // Actualiza el estilo del elemento
+            target.style.width  = event.rect.width + 'px';
+            target.style.height = event.rect.height + 'px';
+
+            // Trasladar cuando resize del borde top o left
+            x += event.deltaRect.left;
+            y += event.deltaRect.top;
+
+            target.style.webkitTransform = target.style.transform =
+                'translate(' + x + 'px,' + y + 'px)';
+
+            target.setAttribute('data-x', x);
+            target.setAttribute('data-y', y);
+          });
+
+        function dragMoveListener (event) {
+          var target = event.target,
+              x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
+              y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+
+          // Trasladar elemento
+          target.style.webkitTransform =
+          target.style.transform =
+            'translate(' + x + 'px, ' + y + 'px)';
+
+          // Actualizar atributos de posición
+          target.setAttribute('data-x', x);
+          target.setAttribute('data-y', y);
+        };
+
+        window.dragMoveListener = dragMoveListener;
+
+
+
+
+        // // En caso de no usar <iron-autogrow-text>, darle comportamiento
+        // // de autoresize a un <textarea> con lo siguiente: 
+        // $("textarea").keyup(function (e) {
+        //   autoheight(this);
+        // });
+
+
+        // function autoheight(a) { 
+        //   $(a).height(20); 
+        //   $(a).height($(a).prop('scrollHeight') + 20); 
+        // };
+
+        // autoheight($("textarea"));
+
+      },
+
+    });
+  </script>
+
+</dom-module>

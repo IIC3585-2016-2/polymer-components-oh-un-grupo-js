@@ -1,0 +1,120 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+`mi-radio`
+Un pequeño componente que actúa como reproductor de radio
+
+@demo demo/mi-radio-index.html 
+-->
+
+<dom-module id="mi-radio">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <h2>Radio [[title]]</h2>
+
+<audio id="audiotag" preload="none" src="[[src]]" controls autoplay="[[autoPlay]]" on-loadedmetadata="tagsLoaded" loadedmetadata="tagsLoaded"></audio>  
+
+
+
+<temblate is="dom-if" if="{{printMeta}}">
+
+<template is="dom-if" if="{{!metaError}}">
+<p>reproduciendo {{songName}} del artista {{songArtist}} </p>
+
+</template>
+
+<template is="dom-if" if="{{metaError}}"> 
+<p> No hay metadatos disponibles </p>
+
+</template>
+
+
+
+</template> 
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'mi-radio',
+
+      properties: {
+        title: {
+          type: String,
+          value: 'mi-radio',
+        },
+      src:
+      {
+      type: String,
+      value: 'http://superstream.co:8088/stream',
+      notify: true,
+      reflectToAtribute: true
+      },
+      printMeta:
+      {
+      type: Boolean,
+      value: true,
+      notify: true,
+      reflectToAtribute: true
+      },
+      songName: 
+      {
+      type: String,
+      value: ''
+
+      },
+      songArtist:
+      {
+      type: String,
+      value: ''
+      },
+      autoPlay:
+      {
+      type: Boolean,
+      value: false
+      },
+      metaError:
+      {
+      type: Boolean,
+      value: true,
+      reflectToAtribute: true,
+      notify: true
+
+      },
+            },
+      tagsLoaded: function()
+      {
+      console.log("evento disparado");
+      var meta = this.$$("#audiotag").mozGetMetadata();
+
+
+      this.songName = meta.title;
+      this.songArtist = meta.artist;
+      console.log("viene meta");
+      console.log(meta);
+      console.log(meta.title);
+
+      if(typeof meta.title === 'undefined')
+      {
+      console.log("dentro del if");
+
+      this.metaError = true;
+      console.log("hay metaError");
+
+      }
+      else
+      {
+
+      this.metaError = false;
+      console.log("no hay metaError");
+      }
+      },
+
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>mi-radio demo</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../mi-radio.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+    </style>
+  </head>
+  <body>
+    <div class="vertical-section-container centered">
+      <h3>Basic mi-radio demo</h3>
+      <demo-snippet>
+        <template>
+		 <!-- Reemplazar con streams con metadatos: 
+        	http://stream.radioreklama.bg:80/nrj.ogg
+        	http://stream.radioreklama.bg:80/radio1.ogg -->
+          <mi-radio title="Testing datos meta" auto-play="true" src="http://amber.hydrosila.com:8000/record.mp3"></mi-radio>
+        </template>
+      </demo-snippet>
+    </div>
+  </body>
+</html>

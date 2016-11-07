@@ -1,0 +1,104 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="/interact-wrapper.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="post-eso.html">
+
+<!--
+`<post-eso-gen>` es un elemento generador de `<post-eso>`s
+
+Uso:
+
+    <body>
+      <post-eso-gen n-post-esos='3' alert-threshold='5'>¡Genera un nuevo Post-Eso!</post-eso>
+
+
+### Styling
+
+`<post-eso-gen>` hereda todas las custom properties de `<post-eso>`:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--post-eso-gen-width` | Ancho del cuadro | 150px
+`--post-eso-gen-height` | Alto del cuadro | 150px
+`--post-eso-gen-color` | Color del cuadro | yellow
+`--post-eso-gen-font-color` | Color de la fuente | blue
+`--post-eso-gen-font-family` | Tipo de fuente | inherit
+
+@demo demo/post-eso-gen-index.html 
+-->
+
+<dom-module id="post-eso-gen">
+  <template>
+    <style>
+      :host {
+      	--post-eso-width: var(--post-eso-gen-width);
+      	--post-eso-height: var(--post-eso-gen-height);
+      	--post-eso-color: var(--post-eso-gen-color);
+      	--post-eso-font-color: var(--post-eso-gen-font-color);
+      	--post-eso-font-family: var(--post-eso-gen-font-family);
+      }
+
+      :host:before {
+      }
+
+    </style>
+
+
+	<div id="container">
+    <paper-button id="btn-gen" on-tap="getPostEso" raised><content></content></paper-button>
+	</div>
+
+  </template>
+
+
+
+
+  <script>
+    Polymer({
+
+      is: 'post-eso-gen',
+
+      properties: {
+
+      	/**
+      	* Cantidad de `<post-eso>`s creados al inicio 
+      	*/
+      	nPostEsos: {
+      		type: Number,
+      		value: '0',
+      	},
+        
+        /**
+        * Largo mínimo de texto para cambiar a estado de alerta en Post-Eso
+        */
+        alertThreshold: {
+          type: Number,
+          value: '',
+        },
+
+      },
+
+      /**
+      * Genera un nuevo Post-Eso en la misma posición
+      * 
+      */
+      getPostEso: function() {
+      	var el =	document.createElement('post-eso'),
+      			parent = this.querySelector('paper-button').parentNode;
+  			el.setAttribute('alert-threshold', this.alertThreshold);
+  			Polymer.dom(parent).appendChild( el );
+
+      },
+
+
+      ready: function() {
+      	for (var i = 0; i < parseInt(this.nPostEsos); i++) {
+      		this.getPostEso();
+      	}
+      }
+
+     
+    });
+  </script>
+
+</dom-module>
