@@ -1,4 +1,4 @@
-# Componentes reusables en Polymer
+# Componentes Reusables en Polymer
 &lt;mi-radio>, &lt;post-eso> y &lt;post-eso-gen> polymer custom elements
 
 ## `<mi-radio>`
